@@ -1302,7 +1302,6 @@ class Adaptavist():
         :type test_run_key: str
         :param exclude_existing_test_cases: if true, creates test results only for new test cases (can be used to add test cases to existing test runs)
                                             if false, creates new test results for existing test cases as well
-        :type exclude_existing_test_cases: bool
 
         :param kwargs: Arbitrary list of keyword arguments
                 environment: environment to distinguish multiple executions (call get_environments() to get a list of available ones)
@@ -1314,6 +1313,7 @@ class Adaptavist():
         self.logger.debug("create_test_results(\"%s\")", test_run_key)
 
         environment = kwargs.pop("environment", None)
+        unassigned_executor = kwargs.pop("unassigned_executor", False)
 
         assert not kwargs, "Unknown arguments: %r" % kwargs
 
@@ -1329,8 +1329,10 @@ class Adaptavist():
             if exclude_existing_test_cases and result["testCaseKey"] in [item["testCaseKey"] for item in test_run.get("items", [])]:
                 continue
             data = {key: value for key, value in result.items()}
-            data["executedBy"] = get_executor()
-            data["assignedTo"] = data["executedBy"]
+            if not unassigned_executor:
+                data["executedBy"] = get_executor()
+                data["assignedTo"] = data["executedBy"]
+
             if environment:
                 data["environment"] = environment
             request_data.append(data)

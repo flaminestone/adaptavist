@@ -7,7 +7,7 @@ _v = VersionInfo("adaptavist").semantic_version()
 __version__ = _v.release_string()
 version_info = _v.version_tuple()
 
-from adaptavist.adaptavist import Adaptavist
+from .adaptavist import Adaptavist
 
 __all__ = (
     "__version__",
